@@ -22,7 +22,7 @@ lin_ucb_rewards_per_experiment = []
 env = LinearMabEnvironment(n_arms=n_arms, dim=2, n_nodes=n_nodes)
 
 for e in range(0, n_experiments):
-    lin_ucb_learner =LinearUcbLearner(arms_features=env.arms_features)
+    lin_ucb_learner = LinearUcbLearner(arms_features=env.arms_features)
     for t in range(0,T):
         pulled_arm = lin_ucb_learner.pull_arm()
         reward = env.round(pulled_arm)
@@ -36,7 +36,7 @@ plt.ylabel("Cumulative regret")
 plt.xlabel("t")
 cum_regret = np.cumsum(opt - np.array(lin_ucb_rewards_per_experiment), axis=1)
 mean_cum_regret = np.mean(cum_regret, axis=0)
-std_cum_regret = np.std(cum_regret, axis = 0) / np.sqrt(n_experiments)
+std_cum_regret = np.std(cum_regret, axis=0) / np.sqrt(n_experiments)
 plt.plot(mean_cum_regret, 'r')
 plt.fill_between(range(len(mean_cum_regret)), mean_cum_regret-1.96*std_cum_regret, mean_cum_regret+1.96*std_cum_regret)
 plt.legend(["Linear UCB", ".95 CI"])

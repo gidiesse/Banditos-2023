@@ -14,11 +14,11 @@ beta distribution associated with each arm after the bandit has finished learnin
 """
 
 n_nodes = 30
-n_arms = 50
+n_arms =50
 T = 365
 mc_it = 500
 n_steps_max = 100
-n_seeds = 1
+n_seeds = 3
 
 env = LinearMabEnvironment(n_arms=n_arms, dim=2, n_nodes=n_nodes)
 lin_ucb_learner = LinearUcbLearner(arms_features=env.arms_features)
@@ -46,6 +46,10 @@ for a in range(n_arms):
     [i, j] = env.arms[a]
     estimated_prob_matrix_ts[i, j] = p_ts[a]
     estimated_prob_matrix_ucb[i, j] = p_ucb[a]
+
+print(f"True prob pmatrix: \n {env.prob_matrix} \n")
+print(f"UCB prob pmatrix: \n {estimated_prob_matrix_ucb} \n")
+print(f"TS prob pmatrix: \n {estimated_prob_matrix_ts} \n")
 
 sel_ts = GreedySeedsSelection(estimated_prob_matrix_ts, mc_it, n_steps_max)
 sel_ucb = GreedySeedsSelection(estimated_prob_matrix_ucb, mc_it, n_steps_max)

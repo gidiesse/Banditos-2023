@@ -48,7 +48,7 @@ class LinearMabEnvironment:
         for e in range(self.n_arms):
             i = np.random.randint(self.n_nodes)
             j = np.random.randint(self.n_nodes)
-            while i == j or self.prob_matrix[i,j]:
+            while i == j or self.prob_matrix[i, j]:
                 i = np.random.randint(self.n_nodes)
                 j = np.random.randint(self.n_nodes)
             arm_feature = (self.nodes_features[i,] == self.nodes_features[j,]).astype(int)
@@ -59,4 +59,17 @@ class LinearMabEnvironment:
         self.arms_features = np.array(features)
         self.arms = np.array(self.arms)
 
+    def customer_class(self):
+        cc = np.array([])
+        for f in self.nodes_features:
+            # C1 = (0,0) or (0,1) this is the class of low-income individuals
+            if f[0] == 0:
+                cc = np.append(cc, 0)
+            # C2 = (1,0) this is the class of rich, young people
+            if f[0] == 1 and f[1] == 0:
+                cc = np.append(cc, 1)
+            # C3 = (1,1) this is the class of rich, old people
+            if f[0] == 1 and f[1] == 1:
+                cc = np.append(cc, 2)
+        return cc
 

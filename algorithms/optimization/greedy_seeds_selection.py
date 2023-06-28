@@ -35,12 +35,12 @@ class GreedySeedsSelection:
             newly_active_nodes = (np.sum(activated_edges, axis=0) > 0) * (1 - active_nodes)
             active_nodes = np.array(active_nodes + newly_active_nodes)
             t += 1
-        return np.sum(active_nodes)
+        return active_nodes
 
     def expected_activations(self, initial_active_nodes):
         count = 0
         for e in range(self.n_iterations):
-            count += self.simulate_episode(self.p_matrix, initial_active_nodes)
+            count += np.sum(self.simulate_episode(self.p_matrix, initial_active_nodes))
         return count / self.n_iterations
 
     def select_seeds(self, k):

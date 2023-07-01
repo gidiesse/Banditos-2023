@@ -30,7 +30,7 @@ import matplotlib.pyplot as plt
 n_nodes = 30
 n_arms = 50
 mc_it = 300
-n_exp = 15
+n_exp = 10
 n_steps_max = 100
 n_seeds = 3
 n_prods = 3
@@ -88,7 +88,7 @@ mean_cum_reward = np.mean(cum_reward, axis=0)
 std_cum_reward = np.std(cum_reward, axis=0) / np.sqrt(mc_it)
 plt.plot(mean_cum_reward, 'r')
 plt.fill_between(range(len(mean_cum_reward)), mean_cum_reward-1.96*std_cum_reward, mean_cum_reward+1.96*std_cum_reward)
-plt.legend(["Linear UCB", ".95 CI"])
+plt.legend(["Combinatorial UCB", ".95 CI"])
 plt.show()
 
 # Instantaneous regret of the algorithm
@@ -100,7 +100,7 @@ mean_inst_regret = np.mean(inst_regret, axis=0)
 std_inst_regret = np.std(cum_regret, axis=0) / np.sqrt(mc_it)
 plt.plot(mean_inst_regret, 'r')
 plt.fill_between(range(len(mean_inst_regret)), mean_inst_regret-1.96*std_inst_regret, mean_inst_regret+1.96*std_inst_regret)
-plt.legend(["Linear UCB", ".95 CI"])
+plt.legend(["Combinatorial UCB", ".95 CI"])
 plt.show()
 
 # Instantaneous reward of the algorithm
@@ -112,7 +112,7 @@ mean_inst_reward = np.mean(inst_reward, axis=0)
 std_inst_reward = np.std(inst_reward, axis=0) / np.sqrt(mc_it)
 plt.plot(mean_inst_reward, 'r')
 plt.fill_between(range(len(mean_inst_reward)), mean_inst_reward-1.96*std_inst_reward, mean_inst_reward+1.96*std_inst_reward)
-plt.legend(["Linear UCB", ".95 CI"])
+plt.legend(["Combinatorial UCB", ".95 CI"])
 plt.show()
 
 

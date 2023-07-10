@@ -1,5 +1,4 @@
 from algorithms.environments.linear_mab_environment_ns import LinearMabEnvironmentNS
-from algorithms.environments.linear_mab_environment import LinearMabEnvironment
 from algorithms.environments.mab_environment_ns import MabEnvironmentNS
 from algorithms.bandits.ucb import UCB
 from algorithms.bandits.ucb_sw import ucbSW
@@ -15,7 +14,9 @@ Three approaches: stationary UCB, sliding window UCB, cusum UCB
 Why SW approach is not working? We have 50 arms and only 365 days. If we have a sliding window 
 that contains less than 50 samples, we will constantly be in the exploration phase (there will be
 always 50-SW non-played arms, and these are the arms that we'll play next rounds). 
-If we have more than 50 samples in the SW, then we can play the most rewarding arm, but having 
+If we have more than 50 samples in the SW, then we can play the most rewarding arm; still we have to 
+deal with 50 arms, so if the SW length is too big we won't be able to detect changes, if it's too short 
+we'll suffer from the same problem of exploring too much. 
 The outputs are 4 plots: 
 1) Cumulative regret
 2) Cumulative reward

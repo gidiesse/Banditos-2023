@@ -14,7 +14,7 @@ beta distribution associated with each arm after the bandit has finished learnin
 """
 
 n_nodes = 30
-n_arms =50
+n_arms = 50
 T = 365
 mc_it = 500
 n_steps_max = 100
@@ -24,7 +24,7 @@ env = LinearMabEnvironment(n_arms=n_arms, dim=2, n_nodes=n_nodes)
 lin_ucb_learner = LinearUcbLearner(arms_features=env.arms_features)
 ts_learner = TSLearner(n_arms=n_arms)
 
-for t in range(0,T):
+for t in range(0, T):
     pulled_arm_ucb = lin_ucb_learner.pull_arm()
     pulled_arm_ts = ts_learner.pull_arm()
     if pulled_arm_ts == pulled_arm_ucb:

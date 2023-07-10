@@ -1,7 +1,7 @@
 import numpy as np
 
 class MabEnvironmentNS:
-    def __init__(self, n_arms, n_nodes, T, n_phases):
+    def __init__(self, n_arms, n_nodes, T, n_phases, hf=False):
         # True parameters theta of the model for the activation probabilities
         # self.theta = np.random.dirichlet(np.ones(dim), size=n_phases)
         # vector of correspondence for the features of each individual
@@ -20,7 +20,7 @@ class MabEnvironmentNS:
         self.arms = []
         self.n_phases = n_phases
         self.T = T
-
+        self.hf = hf
         # we now generate the prob_matrix, edge correspondence features
         self.generate_edge_probs_ns()
 
@@ -39,10 +39,18 @@ class MabEnvironmentNS:
         self.prob_matrix[self.prob_matrix == -1] = 0
 
     def round(self, pulled_arm, t):
-        curr_phase = int(t // (self.T / self.n_phases))
+        if self.hf:
+            phase_length = int(np.sqrt(self.T/self.n_phases))
+            curr_phase = (t % (phase_length * self.n_phases)) // phase_length
+        else:
+            curr_phase = int(t // (self.T / self.n_phases))
         return 1 if np.random.random() < self.p[curr_phase, pulled_arm] else 0
 
     def opt(self, t):
-        curr_phase = int(t // (self.T / self.n_phases))
+        if self.hf:
+            phase_length = int(np.sqrt(self.T / self.n_phases))
+            curr_phase = (t % (phase_length * self.n_phases)) // phase_length
+        else:
+            curr_phase = int(t // (self.T / self.n_phases))
         return np.max(self.p[curr_phase, :])
 

@@ -14,6 +14,7 @@ x[1] = 0 if the candidate is young, x[1] = 1 if the candidate is old
 Instead, theta is the part of the model which is unknown and that we have to learn.
 """
 
+
 class LinearMabEnvironment:
     # n_arms is the number of active edges (50 in our case)
     # dim is the dimension of our feature vector (2 in our case)
@@ -27,7 +28,7 @@ class LinearMabEnvironment:
         # probability of each arm (subset of the probability matrix, non-null entries)
         self.p = np.zeros(n_arms)
         # this is the probability matrix for the activation of the edges
-        self.prob_matrix = np.zeros(shape=(n_nodes, n_nodes))
+        self.prob_matrix = -np.ones(shape=(n_nodes, n_nodes))
         # number of active edges
         self.n_arms = n_arms
         # number of nodes on the graph
@@ -48,16 +49,18 @@ class LinearMabEnvironment:
         for e in range(self.n_arms):
             i = np.random.randint(self.n_nodes)
             j = np.random.randint(self.n_nodes)
-            while i == j or self.prob_matrix[i, j]:
+            while i == j or self.prob_matrix[i, j] != -1:
                 i = np.random.randint(self.n_nodes)
                 j = np.random.randint(self.n_nodes)
-            arm_feature = (self.nodes_features[i,] == self.nodes_features[j,]).astype(int)
+            arm_feature = (self.nodes_features[i, ] == self.nodes_features[j, ]).astype(int)
             features.append(arm_feature)
-            self.arms.append(np.array([i,j]))
+            self.arms.append(np.array([i, j]))
             self.p[e] = np.dot(self.theta, arm_feature)
-            self.prob_matrix[i,j] = self.p[e]
+            self.prob_matrix[i, j] = self.p[e]
         self.arms_features = np.array(features)
         self.arms = np.array(self.arms)
+        self.prob_matrix[self.prob_matrix == -1] = 0
+
 
     def customer_class(self):
         cc = np.array([])

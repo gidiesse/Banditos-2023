@@ -1,4 +1,3 @@
-import numpy as np
 import matplotlib.pyplot as plt
 from algorithms.environments.linear_mab_environment import *
 from algorithms.bandits.lin_ucb_learner import *
@@ -23,7 +22,7 @@ env = LinearMabEnvironment(n_arms=n_arms, dim=2, n_nodes=n_nodes)
 
 for e in range(0, n_experiments):
     lin_ucb_learner = LinearUcbLearner(arms_features=env.arms_features)
-    for t in range(0,T):
+    for t in range(0, T):
         pulled_arm = lin_ucb_learner.pull_arm()
         reward = env.round(pulled_arm)
         lin_ucb_learner.update(pulled_arm, reward)

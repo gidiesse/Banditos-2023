@@ -17,7 +17,7 @@ always 50-SW non-played arms, and these are the arms that we'll play next rounds
 If we have more than 50 samples in the SW, then we can play the most rewarding arm; still we have to 
 deal with 50 arms, so if the SW length is too big we won't be able to detect changes, if it's too short 
 we'll suffer from the same problem of exploring too much. 
-The outputs are 4 plots: 
+The outputs are 4 plots, comparing the performances of the 3 approaches: 
 1) Cumulative regret
 2) Cumulative reward
 3) Instantaneous regret

@@ -13,7 +13,8 @@ class TSMatchingCustom(Learner):
         self.n_products = n_products
         self.n_units = n_units
         self.n_cc = n_cc
-        self.empirical_means = np.ones(n_products*n_cc)
+        self.means = 1e3 * np.ones(n_products*n_cc)
+        self.variance = np.ones(n_products*n_cc)
         self.precision = np.ones(n_products*n_cc) * 1e-4
 
     def init_matrix(self, activated_customers):
@@ -28,7 +29,8 @@ class TSMatchingCustom(Learner):
         rew_matrix = np.zeros(shape=(self.corr_m.shape[0], self.corr_m.shape[1]))
         for i in range(self.corr_m.shape[0]):
             for j in range(self.corr_m.shape[1]):
-                rew_matrix[i, j] = np.random.normal(self.empirical_means[self.corr_m[i, j].astype(int)])
+                rew_matrix[i, j] = np.random.normal(self.means[self.corr_m[i, j].astype(int)],
+                                                    scale=np.sqrt(self.variance[self.corr_m[i, j].astype(int)]))
         row_ind, col_ind = linear_sum_assignment(-rew_matrix)
         return row_ind, col_ind
 
@@ -40,8 +42,12 @@ class TSMatchingCustom(Learner):
         for pulled_arm, reward in zip(pulled_arms_flat.astype(int), rewards):
             self.update_observations(pulled_arm, reward)
             n_samples = len(self.rewards_per_arm[pulled_arm])
-            self.empirical_means[pulled_arm] = (self.empirical_means[pulled_arm] * (n_samples - 1) + reward) / n_samples
-
+            sample_mean = sum(self.rewards_per_arm[pulled_arm]) / n_samples
+            sample_var = sum((self.rewards_per_arm[pulled_arm]-sample_mean)**2) / n_samples if n_samples > 1 else 1
+            # TODO: change variance of the posterior for a generica sigma2
+            self.means[pulled_arm] = (sample_mean / sample_var +
+                                      (sum(self.rewards_per_arm[pulled_arm]) / 1)) / (1 / sample_var + n_samples/1)
+            self.variance[pulled_arm] = 1 / (1 / sample_var + n_samples/1)
 
 
 

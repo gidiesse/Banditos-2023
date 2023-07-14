@@ -8,15 +8,10 @@ import matplotlib.pyplot as plt
 
 """
 STEP 6
-Regret analysis for the UCB algorithm applied to the learning of the probability matrix
-associated to the activations of the edges of a graph in a non stationary environment.
-Three approaches: stationary UCB, sliding window UCB, cusum UCB 
-Why SW approach is not working? We have 50 arms and only 365 days. If we have a sliding window 
-that contains less than 50 samples, we will constantly be in the exploration phase (there will be
-always 50-SW non-played arms, and these are the arms that we'll play next rounds). 
-If we have more than 50 samples in the SW, then we can play the most rewarding arm; still we have to 
-deal with 50 arms, so if the SW length is too big we won't be able to detect changes, if it's too short 
-we'll suffer from the same problem of exploring too much. 
+Regret analysis for the two non stationary flavours of the UCB algorithm  and EXP3 applied to learning 
+the probability matrix associated to the activations of the edges of a graph in a non stationary 
+environment.
+Three approaches: sliding window UCB, cusum UCB, EXP3 
 The outputs are 4 plots: 
 1) Cumulative regret
 2) Cumulative reward
@@ -25,7 +20,7 @@ The outputs are 4 plots:
 """
 
 # here we establish if we are in the case of high-frequency phase changes or not
-hf = True
+hf = False
 
 n_nodes = 30
 n_arms = 50
@@ -69,8 +64,7 @@ for e in range(0, n_experiments):
     ucb_sw_rewards_per_experiment.append(ucb_sw.collected_rewards)
     ucb_cusum_rewards_per_experiment.append(ucb_cusum.collected_rewards)
     opt_reward_per_experiment.append(opt)
-    if not e:
-        print(opt)
+
 
 # Cumulative regret of the algorithm
 plt.figure(0)

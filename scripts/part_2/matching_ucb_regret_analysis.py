@@ -4,7 +4,7 @@ from algorithms.environments.linear_mab_environment import LinearMabEnvironment
 from algorithms.optimization.greedy_seeds_selection import GreedySeedsSelection
 from algorithms.bandits.ucb_matching_custom import UCBMatchingCustom
 import matplotlib.pyplot as plt
-
+from algorithms.bandits.ts_matching_custom import TSMatchingCustom
 
 # We are working for Tiffany & co, our aim is to carry out an influence maximization campaign
 # on Instagram to raise awareness about our products and entice new customers.
@@ -47,7 +47,7 @@ env_matching = EnvironmentGaussian(n_prods, n_units, n_cc, gaussian_means)
 ucb_rew = np.zeros(shape=(mc_it, n_exp))
 opt_rew = np.zeros(shape=(mc_it, n_exp))
 for it in range(mc_it):
-    ucb_learner = UCBMatchingCustom(n_prods, n_units, n_cc)
+    ucb_learner = TSMatchingCustom(n_prods, n_units, n_cc)
     ucb_rew_it = []
     opt_rew_it = []
     for e in range(n_exp):

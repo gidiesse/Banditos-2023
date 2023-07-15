@@ -1,6 +1,6 @@
 from algorithms.bandits.ucb_matching import *
 from algorithms.environments.environment_matching_gaussian import EnvironmentGaussian
-from algorithms.environments.linear_mab_environment import LinearMabEnvironment
+from algorithms.environments.mab_environment_ns import MabEnvironmentNS
 from algorithms.optimization.greedy_seeds_selection import GreedySeedsSelection
 from algorithms.bandits.ucb_matching_custom import UCBMatchingCustom
 import matplotlib.pyplot as plt
@@ -30,27 +30,28 @@ from algorithms.bandits.ts_matching_custom import TSMatchingCustom
 n_nodes = 30
 n_arms = 50
 mc_it = 300
-n_exp = 10
-n_steps_max = 100
+T = 100
+n_steps_max = n_nodes
 n_seeds = 3
 n_prods = 3
 n_units = 3
 n_cc = 3
+sigma = 18
 
-env_influence = LinearMabEnvironment(n_arms=n_arms, dim=2, n_nodes=n_nodes)
+env_influence = MabEnvironmentNS(n_arms=n_arms, dim=2, n_nodes=n_nodes, T=T)
 selector = GreedySeedsSelection(env_influence.prob_matrix, mc_it, n_steps_max)
 optimal_seeds = selector.select_seeds(k=n_seeds)
 
 gaussian_means = np.array([[10, 0, 0], [5, 40, 30], [5, 30, 40]])
-env_matching = EnvironmentGaussian(n_prods, n_units, n_cc, gaussian_means)
+env_matching = EnvironmentGaussian(n_prods, n_units, n_cc, gaussian_means, sigma)
 
-ucb_rew = np.zeros(shape=(mc_it, n_exp))
-opt_rew = np.zeros(shape=(mc_it, n_exp))
+ucb_rew = np.zeros(shape=(mc_it, T))
+opt_rew = np.zeros(shape=(mc_it, T))
 for it in range(mc_it):
-    ucb_learner = TSMatchingCustom(n_prods, n_units, n_cc)
+    ucb_learner = TSMatchingCustom(n_prods, n_units, n_cc, sigma)
     ucb_rew_it = []
     opt_rew_it = []
-    for e in range(n_exp):
+    for e in range(T):
         influenced_nodes = selector.simulate_episode(env_influence.prob_matrix, optimal_seeds)
         cc = env_influence.customer_class()
         matching_customers = np.array([])

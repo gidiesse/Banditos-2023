@@ -2,13 +2,14 @@ import numpy as np
 from scipy.optimize import linear_sum_assignment
 
 class EnvironmentGaussian:
-    def __init__(self, n_products, n_units, n_cc, gaussian_means):
+    def __init__(self, n_products, n_units, n_cc, gaussian_means, sigma=1):
         self.n_arms = n_products * n_cc
         self.means = gaussian_means.reshape(-1)
         self.n_cc = n_cc
         self.n_products = n_products
         self.n_units = n_units
         self.corr_m = np.array([])
+        self.sigma = np.ones(self.n_arms) * sigma
 
     def init_matrix(self, activated_customers):
         corr_matrix = np.zeros(shape=(len(activated_customers), self.n_products * self.n_units))
@@ -27,5 +28,6 @@ class EnvironmentGaussian:
         return rew_matrix[opt_matching].sum()
 
     def round(self, pulled_arms):
-        reward = np.random.normal(loc=self.means[self.corr_m[pulled_arms].astype(int)])
+        reward = np.random.normal(loc=self.means[self.corr_m[pulled_arms].astype(int)],
+                                  scale=self.sigma[self.corr_m[pulled_arms].astype(int)])
         return reward

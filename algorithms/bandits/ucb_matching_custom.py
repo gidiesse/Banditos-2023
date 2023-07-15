@@ -35,7 +35,7 @@ class UCBMatchingCustom(UCB):
             pulled_arms_flat = np.append(pulled_arms_flat, self.corr_m[i, j])
         for a in range(self.n_arms):
             n_samples = len(self.rewards_per_arm[a])
-            self.confidence[a] = (2*np.log(self.t) / n_samples) ** 0.5 if n_samples else np.inf
+            self.confidence[a] = (4*np.log(self.t) / n_samples) ** 0.5 if n_samples else np.inf
         for pulled_arm, reward in zip(pulled_arms_flat.astype(int), rewards):
             self.update_observations(pulled_arm, reward)
             n_samples = len(self.rewards_per_arm[pulled_arm])

@@ -2,9 +2,6 @@ from algorithms.bandits.learner import Learner
 from scipy.optimize import linear_sum_assignment
 import numpy as np
 
-"""
-WORK IN PROGRESS, THIS CLASS DOESN'T WORK!
-"""
 
 class TSMatchingCustom(Learner):
     def __init__(self, n_products, n_units, n_cc, sigma=1):

@@ -1,7 +1,7 @@
 from algorithms.optimization.greedy_seeds_selection import *
-from algorithms.environments.linear_mab_environment import *
-from algorithms.bandits.lin_ucb_learner import *
-from algorithms.bandits.ts_learner import TSLearner
+from outdated.linear_mab_environment import *
+from outdated.lin_ucb_learner import *
+from outdated.ts_learner import TSLearner
 
 """
 This is a script for selecting the best set of seeds for an influence maximisation problem.

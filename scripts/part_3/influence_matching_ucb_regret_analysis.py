@@ -1,9 +1,9 @@
-from algorithms.bandits.ucb_matching import *
+from outdated.ucb_matching import *
 from algorithms.environments.environment_matching_gaussian import EnvironmentGaussian
-from algorithms.environments.linear_mab_environment import LinearMabEnvironment
+from outdated.linear_mab_environment import LinearMabEnvironment
 from algorithms.optimization.greedy_seeds_selection import GreedySeedsSelection
 from algorithms.bandits.ucb_matching_custom import UCBMatchingCustom
-from algorithms.bandits.lin_ucb_learner import LinearUcbLearner
+from outdated.lin_ucb_learner import LinearUcbLearner
 import matplotlib.pyplot as plt
 
 """

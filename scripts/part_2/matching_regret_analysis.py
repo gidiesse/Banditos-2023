@@ -1,10 +1,10 @@
-from algorithms.bandits.ucb_matching import *
 from algorithms.environments.environment_matching_gaussian import EnvironmentGaussian
 from algorithms.environments.mab_environment_ns import MabEnvironmentNS
 from algorithms.optimization.greedy_seeds_selection import GreedySeedsSelection
-from algorithms.bandits.ucb_matching_custom import UCBMatchingCustom
-import matplotlib.pyplot as plt
 from algorithms.bandits.ts_matching_custom import TSMatchingCustom
+from algorithms.bandits.ucb_matching_custom import UCBMatchingCustom
+import numpy as np
+import matplotlib.pyplot as plt
 
 # We are working for Tiffany & co, our aim is to carry out an influence maximization campaign
 # on Instagram to raise awareness about our products and entice new customers.
@@ -27,16 +27,24 @@ from algorithms.bandits.ts_matching_custom import TSMatchingCustom
 # 4) If we match C2 with D3 or C3 with D2, our mean reward is 30.
 # 5) If we match C2 or C3 with D1, our mean reward is 5.
 
+np.random.seed(13)
 n_nodes = 30
 n_arms = 50
-mc_it = 300
-T = 100
+mc_it = 50
+T = 365
 n_steps_max = n_nodes
 n_seeds = 3
 n_prods = 3
 n_units = 3
 n_cc = 3
-sigma = 18
+sigma = 20
+
+# Flag True if the regret analysis has to be carried on TS algorithm
+TS = True
+if TS:
+    legend = "Combinatorial TS"
+else:
+    legend = "Combinatorial UCB"
 
 env_influence = MabEnvironmentNS(n_arms=n_arms, dim=2, n_nodes=n_nodes, T=T)
 selector = GreedySeedsSelection(env_influence.prob_matrix, mc_it, n_steps_max)
@@ -45,12 +53,15 @@ optimal_seeds = selector.select_seeds(k=n_seeds)
 gaussian_means = np.array([[10, 0, 0], [5, 40, 30], [5, 30, 40]])
 env_matching = EnvironmentGaussian(n_prods, n_units, n_cc, gaussian_means, sigma)
 
-ucb_rew = np.zeros(shape=(mc_it, T))
-opt_rew = np.zeros(shape=(mc_it, T))
+learner_rew = np.zeros(shape=(mc_it, T))
+opt_rew = 0
 for it in range(mc_it):
-    ucb_learner = TSMatchingCustom(n_prods, n_units, n_cc, sigma)
-    ucb_rew_it = []
-    opt_rew_it = []
+    if TS:
+        learner = TSMatchingCustom(n_prods, n_units, n_cc, sigma)
+    else:
+        learner = UCBMatchingCustom(n_prods, n_units, n_cc)
+    learner_rew_it = []
+    opt_rew_it = 0
     for e in range(T):
         influenced_nodes = selector.simulate_episode(env_influence.prob_matrix, optimal_seeds)
         cc = env_influence.customer_class()
@@ -58,62 +69,64 @@ for it in range(mc_it):
         for act, c in zip(influenced_nodes, cc):
             if act == 1:
                 matching_customers = np.append(matching_customers, c)
-        opt_rew_it.append(env_matching.optimal_matching(matching_customers))
+        opt_rew_it += env_matching.optimal_matching(matching_customers)
 
-        pulled_arms = ucb_learner.pull_arm(matching_customers)
+        pulled_arms = learner.pull_arm(matching_customers)
         rewards = env_matching.round(pulled_arms)
-        ucb_learner.update(pulled_arms, rewards)
-        ucb_rew_it.append(rewards.sum())
+        learner.update(pulled_arms, rewards)
+        learner_rew_it.append(rewards.sum())
 
-    opt_rew[it, :] = opt_rew_it
-    ucb_rew[it, :] = ucb_rew_it
+    opt_rew += opt_rew_it/T
+    learner_rew[it, :] = learner_rew_it
+opt_rew /= mc_it
 
 # Cumulative regret of the algorithm
 plt.figure(0)
 plt.ylabel("Cumulative regret")
 plt.xlabel("t")
-cum_regret = np.cumsum(np.array(opt_rew) - np.array(ucb_rew), axis=1)
+cum_regret = np.cumsum(opt_rew - np.array(learner_rew), axis=1)
 mean_cum_regret = np.mean(cum_regret, axis=0)
 std_cum_regret = np.std(cum_regret, axis=0) / np.sqrt(mc_it)
 plt.plot(mean_cum_regret, 'r')
 plt.fill_between(range(len(mean_cum_regret)), mean_cum_regret-1.96*std_cum_regret, mean_cum_regret+1.96*std_cum_regret)
-plt.legend(["Combinatorial UCB", ".95 CI"])
+plt.legend([f"{legend}", ".95 CI"])
 plt.show()
 
 # Cumulative reward collected by the algorithm
 plt.figure(1)
 plt.ylabel("Cumulative reward")
 plt.xlabel("t")
-cum_reward = np.cumsum(np.array(ucb_rew), axis=1)
+cum_reward = np.cumsum(np.array(learner_rew), axis=1)
 mean_cum_reward = np.mean(cum_reward, axis=0)
 std_cum_reward = np.std(cum_reward, axis=0) / np.sqrt(mc_it)
 plt.plot(mean_cum_reward, 'r')
 plt.fill_between(range(len(mean_cum_reward)), mean_cum_reward-1.96*std_cum_reward, mean_cum_reward+1.96*std_cum_reward)
-plt.legend(["Combinatorial UCB", ".95 CI"])
+plt.legend([f"{legend}", ".95 CI"])
 plt.show()
 
 # Instantaneous regret of the algorithm
 plt.figure(2)
 plt.ylabel("Instantaneous regret")
 plt.xlabel("t")
-inst_regret = (np.array(opt_rew) - np.array(ucb_rew))
+inst_regret = (opt_rew - np.array(learner_rew))
 mean_inst_regret = np.mean(inst_regret, axis=0)
-std_inst_regret = np.std(cum_regret, axis=0) / np.sqrt(mc_it)
+std_inst_regret = np.std(inst_regret, axis=0) / np.sqrt(mc_it)
 plt.plot(mean_inst_regret, 'r')
 plt.fill_between(range(len(mean_inst_regret)), mean_inst_regret-1.96*std_inst_regret, mean_inst_regret+1.96*std_inst_regret)
-plt.legend(["Combinatorial UCB", ".95 CI"])
+plt.legend([f"{legend}", ".95 CI"])
 plt.show()
 
 # Instantaneous reward of the algorithm
 plt.figure(3)
 plt.ylabel("Instantaneous reward")
 plt.xlabel("t")
-inst_reward = np.array(ucb_rew)
+inst_reward = np.array(learner_rew)
 mean_inst_reward = np.mean(inst_reward, axis=0)
 std_inst_reward = np.std(inst_reward, axis=0) / np.sqrt(mc_it)
 plt.plot(mean_inst_reward, 'r')
 plt.fill_between(range(len(mean_inst_reward)), mean_inst_reward-1.96*std_inst_reward, mean_inst_reward+1.96*std_inst_reward)
-plt.legend(["Combinatorial UCB", ".95 CI"])
+plt.axhline(y=opt_rew, color='black', linestyle='-')
+plt.legend([f"{legend}", ".95 CI"])
 plt.show()
 
 

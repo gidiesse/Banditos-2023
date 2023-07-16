@@ -12,7 +12,7 @@ class TSLearner(Learner):
         self.prob_matrix = np.zeros(shape=(n_nodes, n_nodes))
         self.mc_it = mc_it
 
-    def pull_arm(self, n_seeds):
+    def select_best_seeds(self, n_seeds):
         self.prob_matrix = np.zeros(shape=(self.n_nodes, self.n_nodes))
         for arm in range(self.n_arms):
             (i, j) = self.arm_indexes[arm].astype(int)

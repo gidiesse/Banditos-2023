@@ -35,7 +35,7 @@ for e in range(0, n_experiments):
     print(e)
     ts_learner = TSLearner(n_arms, env.arms, n_nodes, mc_it=n_experiments*5)
     for t in range(0, T):
-        seeds_estimated = ts_learner.pull_arm(n_seeds)
+        seeds_estimated = ts_learner.select_best_seeds(n_seeds)
         simulation = env.simulate_episode(seeds_estimated)
         reward = simulation.sum()
         ts_learner.update(1, reward, new_episode=simulation)
@@ -74,6 +74,7 @@ mean_inst_regret = np.mean(inst_regret, axis=0)
 std_inst_regret = np.std(inst_regret, axis = 0) / np.sqrt(n_experiments)
 plt.plot(mean_inst_regret, 'r')
 plt.fill_between(range(len(mean_inst_regret)), mean_inst_regret-1.96*std_inst_regret, mean_inst_regret+1.96*std_inst_regret)
+plt.axhline(y=0, color='black', linestyle='-')
 plt.legend(["TS", ".95 CI"])
 plt.show()
 

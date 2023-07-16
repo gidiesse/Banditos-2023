@@ -39,8 +39,8 @@ n_units = 3
 n_cc = 3
 sigma = 20
 
-# Flag True if the regret analysis has to be carried on TS algorithm
-TS = True
+# Flag True if the regret analysis has to be carried on TS algorithm, otherwise UCB
+TS = False
 if TS:
     legend = "Combinatorial TS"
 else:
@@ -72,7 +72,7 @@ for it in range(mc_it):
         opt_rew_it += env_matching.optimal_matching(matching_customers)
 
         pulled_arms = learner.pull_arm(matching_customers)
-        rewards = env_matching.round(pulled_arms)
+        rewards = env_matching.round(pulled_arms, matching_customers)
         learner.update(pulled_arms, rewards)
         learner_rew_it.append(rewards.sum())
 
@@ -113,6 +113,7 @@ mean_inst_regret = np.mean(inst_regret, axis=0)
 std_inst_regret = np.std(inst_regret, axis=0) / np.sqrt(mc_it)
 plt.plot(mean_inst_regret, 'r')
 plt.fill_between(range(len(mean_inst_regret)), mean_inst_regret-1.96*std_inst_regret, mean_inst_regret+1.96*std_inst_regret)
+plt.axhline(y=0, color='black', linestyle='-')
 plt.legend([f"{legend}", ".95 CI"])
 plt.show()
 

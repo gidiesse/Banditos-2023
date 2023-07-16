@@ -20,22 +20,23 @@ class ucbIM(Learner):
     """
     
     """
-    def pull_arm(self, n_seeds):
+    def select_best_seeds(self, n_seeds):
         for arm in range(self.n_arms):
             (i, j) = self.arm_indexes[arm].astype(int)
             self.prob_matrix[i, j] += self.confidence[arm]
         selector = GreedySeedsSelection(self.prob_matrix, self.mc_it, self.n_nodes)
         return selector.select_seeds(n_seeds)
 
-
+    """
     def update(self, pull_arm, reward, dataset):
         self.t += 1
         self.update_observations(pull_arm, reward)
         self.estimate_probabilities(dataset)
         self.compute_upper_bounds(dataset[-1])
+    """
 
 
-    def update_optimized(self, pull_arm, reward, new_episode: npt.NDArray):
+    def update(self, pull_arm, reward, new_episode: npt.NDArray):
         self.t += 1
         self.update_observations(pull_arm, reward)
         self.compute_upper_bounds(new_episode)

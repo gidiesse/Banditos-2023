@@ -35,10 +35,10 @@ for e in range(0, n_experiments):
     print(e)
     ucb_learner = ucbIM(n_arms, env.arms, n_nodes, mc_it=n_experiments * 5)
     for t in range(0, T):
-        seeds_estimated = ucb_learner.pull_arm(n_seeds)
+        seeds_estimated = ucb_learner.select_best_seeds(n_seeds)
         simulation = env.simulate_episode(seeds_estimated)
         reward = simulation.sum()
-        ucb_learner.update_optimized(1, reward, new_episode=simulation)
+        ucb_learner.update(1, reward, new_episode=simulation)
     ucb_rewards_per_experiment.append(ucb_learner.collected_rewards)
 
 # Cumulative regret of the algorithm

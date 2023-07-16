@@ -27,7 +27,8 @@ class EnvironmentGaussian:
         opt_matching = linear_sum_assignment(-rew_matrix)
         return rew_matrix[opt_matching].sum()
 
-    def round(self, pulled_arms):
+    def round(self, pulled_arms, activated_customers):
+        self.init_matrix(activated_customers)
         reward = np.random.normal(loc=self.means[self.corr_m[pulled_arms].astype(int)],
                                   scale=self.sigma[self.corr_m[pulled_arms].astype(int)])
         return reward

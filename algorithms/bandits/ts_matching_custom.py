@@ -42,7 +42,6 @@ class TSMatchingCustom(Learner):
             n_samples = len(self.rewards_per_arm[pulled_arm])
             sample_mean = sum(self.rewards_per_arm[pulled_arm]) / n_samples
             sample_var = sum((self.rewards_per_arm[pulled_arm]-sample_mean)**2) / n_samples if n_samples > 1 else 1
-            # TODO: change variance of the posterior for a generica sigma2
             self.means[pulled_arm] = (sample_mean / sample_var +
                                       (sum(self.rewards_per_arm[pulled_arm]) / self.sigma**2)) / (1 / sample_var + n_samples/self.sigma**2)
             self.variance[pulled_arm] = 1 / (1 / sample_var + n_samples/self.sigma**2)

@@ -3,6 +3,7 @@ from algorithms.environments.mab_environment_ns import MabEnvironmentNS
 from algorithms.optimization.greedy_seeds_selection import GreedySeedsSelection
 from algorithms.bandits.ts_matching_custom import TSMatchingCustom
 from algorithms.bandits.ucb_matching_custom import UCBMatchingCustom
+from algorithms.optimization.context_generation import contextGeneration
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -27,7 +28,9 @@ import matplotlib.pyplot as plt
 # 4) If we match C2 with D3 or C3 with D2, our mean reward is 30.
 # 5) If we match C2 or C3 with D1, our mean reward is 5.
 
-np.random.seed(13)
+# TODO: implement the script as in part 3 (not part 2)
+
+np.random.seed(15)
 n_nodes = 30
 n_arms = 50
 mc_it = 50
@@ -38,6 +41,8 @@ n_prods = 3
 n_units = 3
 n_cc = 3
 sigma = 20
+test_time = 14
+break_points = range(0, test_time*7, test_time)
 
 # Flag True if the regret analysis has to be carried on TS algorithm, otherwise UCB
 TS = True
@@ -55,29 +60,48 @@ env_matching = EnvironmentGaussian(n_prods, n_units, n_cc, gaussian_means, sigma
 
 learner_rew = np.zeros(shape=(mc_it, T))
 opt_rew = 0
+split_chosen = np.zeros(8)
 for it in range(mc_it):
-    if TS:
-        learner = TSMatchingCustom(n_prods, n_units, n_cc, sigma)
-    else:
-        learner = UCBMatchingCustom(n_prods, n_units, n_cc)
     learner_rew_it = []
     opt_rew_it = 0
+    context_generation = contextGeneration(nodes_features=env_influence.nodes_features,
+                                           test_time=test_time)
     for e in range(T):
         influenced_nodes = selector.simulate_episode(env_influence.prob_matrix, optimal_seeds)
+
+        # Estimation of the context when by using a greedy algorithm
+        cc_estimated, n_cc_estimated = context_generation.choose_split()
+        matching_customers_estimated = np.array([])
+        for act, c in zip(influenced_nodes, cc_estimated):
+            if act == 1:
+                matching_customers_estimated = np.append(matching_customers_estimated, c)
+
+        # Computation of the true context (clairvoyant)
         cc = env_influence.customer_class()
         matching_customers = np.array([])
         for act, c in zip(influenced_nodes, cc):
             if act == 1:
                 matching_customers = np.append(matching_customers, c)
+
+        # We instantiate the bandit if we are at a breakpoint for the phases
+        if e in break_points:
+            if TS:
+                learner = TSMatchingCustom(n_prods, n_units, n_cc_estimated, sigma)
+            else:
+                learner = UCBMatchingCustom(n_prods, n_units, n_cc_estimated)
+
         opt_rew_it += env_matching.optimal_matching(matching_customers)
 
-        pulled_arms = learner.pull_arm(matching_customers)
+        pulled_arms = learner.pull_arm(matching_customers_estimated)
         rewards = env_matching.round(pulled_arms, matching_customers)
         learner.update(pulled_arms, rewards)
         learner_rew_it.append(rewards.sum())
 
     opt_rew += opt_rew_it/T
     learner_rew[it, :] = learner_rew_it
+    split_chosen[context_generation.best_split()] += 1
+
+print(f"The number of times we chose split i is: \n {split_chosen}")
 opt_rew /= mc_it
 
 # Cumulative regret of the algorithm

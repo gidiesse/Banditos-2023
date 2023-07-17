@@ -19,7 +19,7 @@ n_arms = 50
 T = 365
 n_experiments = 10
 n_steps_max = n_nodes
-n_seeds = 3
+n_seeds = 1
 ucb_rewards_per_experiment = []
 
 

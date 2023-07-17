@@ -135,6 +135,6 @@ class ucbIM(Learner):
                     self.n_samples[arm] += 1
                     observed = True
         for arm in range(self.n_arms):
-            self.confidence[arm] = np.sqrt(np.log(self.t) / (16*self.n_samples[arm])) if self.n_samples[arm] else 1e3
+            self.confidence[arm] = np.sqrt(np.log(self.t) / (4 * self.n_samples[arm])) if self.n_samples[arm] else 1e3
 
 

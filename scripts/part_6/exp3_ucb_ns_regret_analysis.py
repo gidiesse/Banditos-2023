@@ -1,7 +1,7 @@
 from algorithms.environments.mab_environment_ns import MabEnvironmentNS
 from algorithms.bandits.exp3 import Exp3
-from algorithms.bandits.ucb_sw import ucbSW
-from algorithms.bandits.ucb_cusum import UCBCUSUM
+from outdated.ucb_sw import ucbSW
+from outdated.ucb_cusum import UCBCUSUM
 import numpy as np
 import matplotlib.pyplot as plt
 

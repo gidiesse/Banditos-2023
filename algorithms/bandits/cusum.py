@@ -23,6 +23,6 @@ class CUSUM:
             return self.g_plus > self.h or self.g_minus > self.h
 
     def reset(self):
-        self.t = 0
+        self.t = 1
         self.g_minus = 0
         self.g_plus = 0

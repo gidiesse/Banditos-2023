@@ -17,9 +17,9 @@ np.random.seed(17)
 n_nodes = 30
 n_arms = 50
 T = 365
-n_experiments = 10
+n_experiments = 20
 n_steps_max = n_nodes
-n_seeds = 1
+n_seeds = 3
 ucb_rewards_per_experiment = []
 
 

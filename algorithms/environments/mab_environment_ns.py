@@ -42,25 +42,20 @@ class MabEnvironmentNS:
         self.arms = np.array(self.arms)
         self.prob_matrix[self.prob_matrix == -1] = 0
 
-    def round(self, pulled_arm, t):
-        if self.hf:
-            phase_length = int(np.sqrt(self.T/self.n_phases))
-            curr_phase = (t % (phase_length * self.n_phases)) // phase_length
-        else:
-            curr_phase = int(t // (self.T / self.n_phases))
-        return 1 if np.random.random() < self.p[curr_phase, pulled_arm] else 0
-
-    def opt(self, t):
+    def select_phase(self, t):
         if self.hf:
             phase_length = int(np.sqrt(self.T / self.n_phases))
             curr_phase = (t % (phase_length * self.n_phases)) // phase_length
         else:
             curr_phase = int(t // (self.T / self.n_phases))
-        return np.max(self.p[curr_phase, :])
+        return curr_phase
 
-    def simulate_episode(self, set_seeds):
+    def simulate_episode(self, set_seeds, phase=0):
         n_max_steps = self.n_nodes
-        prob_matrix = self.prob_matrix.copy()
+        if self.n_phases > 1:
+            prob_matrix = self.prob_matrix[phase].copy()
+        else:
+            prob_matrix = self.prob_matrix.copy()
         initial_active_nodes = set_seeds
         history = np.array([initial_active_nodes])
         active_nodes = initial_active_nodes

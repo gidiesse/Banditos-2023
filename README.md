@@ -5,7 +5,7 @@
 ```
 │
 ├── utils    
-│   ├── plots             <- Plots of meaningful results
+│   └── plots             <- Plots of meaningful results
 │
 ├── scripts               <- Scripts for running the experiments
 │    ├── part_1           <- Learning for Social Influence

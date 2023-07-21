@@ -17,17 +17,6 @@ class EXP3(Learner):
         self.w = np.ones(n_arms)
         self.gamma = 0.2
 
-    """
-    def select_best_seeds(self, n_seeds):
-        self.prob_matrix = np.zeros(shape=(self.n_nodes, self.n_nodes))
-        P = np.exp(self.lr * self.S) / np.sum(np.exp(self.lr * self.S))
-        for arm in range(self.n_arms):
-            (i, j) = self.arm_indexes[arm].astype(int)
-            self.prob_matrix[i, j] = P[arm]
-        selector = GreedySeedsSelection(self.prob_matrix, self.mc_it, self.n_nodes)
-        return selector.select_seeds(n_seeds)
-    """
-
     def select_best_seeds(self, n_seeds):
         self.prob_matrix = np.zeros(shape=(self.n_nodes, self.n_nodes))
         P = (1 - self.gamma) * self.w / self.w.sum() + self.gamma/self.n_arms
@@ -37,26 +26,6 @@ class EXP3(Learner):
         selector = GreedySeedsSelection(self.prob_matrix, self.mc_it, self.n_nodes)
         return selector.select_seeds(n_seeds)
 
-    """
-    def update(self, pulled_arm, reward, new_episode: npt.NDArray):
-        self.t += 1
-        self.update_observations(reward=reward, pulled_arm=pulled_arm)
-        P = np.exp(self.lr * self.S) / np.sum(np.exp(self.lr * self.S))
-        for arm in range(self.n_arms):
-            observed = False
-            activated = False
-            for i in np.argwhere(new_episode.sum(axis=0) == 1):
-                if i == self.arm_indexes[arm][0]:
-                    if not observed:
-                        observed = True
-                for j in np.argwhere(new_episode.sum(axis=0) == 1):
-                    if j == self.arm_indexes[arm][1]:
-                            activated = True
-            if observed:
-                self.S[arm] = self.S[arm] + 1 - (1 - activated) / P[arm]
-            else:
-                self.S[arm] = self.S[arm] + 1
-    """
 
     def update(self, pulled_arm, reward, new_episode: npt.NDArray):
         self.t += 1

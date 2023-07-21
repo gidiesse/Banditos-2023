@@ -24,15 +24,6 @@ class ucbIM(Learner):
         selector = GreedySeedsSelection(self.prob_matrix, self.mc_it, n_max_steps=self.n_nodes)
         return selector.select_seeds(n_seeds)
 
-    """
-    def update(self, pull_arm, reward, dataset):
-        self.t += 1
-        self.update_observations(pull_arm, reward)
-        self.estimate_probabilities(dataset)
-        self.compute_upper_bounds(dataset[-1])
-    """
-
-
     def update(self, pull_arm, reward, new_episode: npt.NDArray):
         self.t += 1
         self.update_observations(pull_arm, reward)
@@ -132,6 +123,6 @@ class ucbIM(Learner):
                     self.n_samples[arm] += 1
                     observed = True
         for arm in range(self.n_arms):
-            self.confidence[arm] = np.sqrt(7*np.log(self.t) / (2*self.n_samples[arm])) if self.n_samples[arm] else 1e3
+            self.confidence[arm] = np.sqrt(np.log(self.t) / (4*self.n_samples[arm])) if self.n_samples[arm] else 1e3
 
 

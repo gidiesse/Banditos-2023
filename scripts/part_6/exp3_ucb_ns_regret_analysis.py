@@ -12,6 +12,7 @@ Regret analysis for the two non stationary flavours of the UCB algorithm and EXP
 the probability matrix associated to the activations of the edges of a graph in a non stationary 
 environment.
 Three approaches: sliding window UCB, cusum UCB, EXP3 
+You can set the hf flag and n_phases to establish the degree of non stationarity of the environment.
 The outputs are 4 plots: 
 1) Cumulative regret
 2) Cumulative reward

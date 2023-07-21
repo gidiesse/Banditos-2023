@@ -17,7 +17,7 @@ np.random.seed(17)
 n_nodes = 30
 n_arms = 50
 T = 365
-n_experiments = 3
+n_experiments = 20
 n_steps_max = n_nodes
 n_seeds = 1
 exp3_rewards_per_experiment = []

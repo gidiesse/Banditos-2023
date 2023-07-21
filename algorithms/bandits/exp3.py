@@ -15,7 +15,7 @@ class EXP3(Learner):
         self.prob_matrix = np.zeros(shape=(n_nodes, n_nodes))
         self.lr = np.sqrt(np.log(self.n_arms) / (20 * self.n_arms * self.T))
         self.w = np.ones(n_arms)
-        self.gamma = 0.05
+        self.gamma = 0.2
 
     """
     def select_best_seeds(self, n_seeds):

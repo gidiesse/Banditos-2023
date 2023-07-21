@@ -27,7 +27,7 @@ n_nodes = 30
 n_arms = 50
 T = 365
 n_phases = 3
-n_experiments = 10
+n_experiments = 20
 n_seeds = 1
 
 # Sliding window parameter
@@ -36,7 +36,9 @@ window_size = 6 * int(T**0.5)
 # CUSUM parameters
 M = 120
 # h has to be modified in the grid search
-h = 3 * np.log(T)
+h = 2 * np.log(T)
+# eps has to be modified in the grid search
+eps = 0.25
 
 
 exp3_rewards_per_experiment = []
@@ -68,7 +70,7 @@ for e in range(0, n_experiments):
     print(e)
     exp3 = EXP3(n_arms, env.arms, n_nodes, n_experiments*5, T)
     ucb_sw = ucbSW(n_arms, env.arms, n_nodes, mc_it=n_experiments * 5, window_size=window_size)
-    ucb_cusum = ucbCUSUM(n_arms, env.arms, n_nodes, mc_it=n_experiments * 5, M=M, h=h)
+    ucb_cusum = ucbCUSUM(n_arms, env.arms, n_nodes, mc_it=n_experiments * 5, M=M, h=h, eps=eps)
     # We need the whole dataset of the episodes for the sliding window approach
     dataset_episodes = []
     for t in range(0, T):

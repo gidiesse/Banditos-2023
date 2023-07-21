@@ -95,6 +95,7 @@ for it in range(mc_it):
         pulled_arms = learner.pull_arm(matching_customers_estimated)
         rewards = env_matching.round(pulled_arms, matching_customers)
         learner.update(pulled_arms, rewards)
+        context_generation.collected_rewards = np.append(context_generation.collected_rewards, rewards.sum())
         learner_rew_it.append(rewards.sum())
 
     opt_rew += opt_rew_it/T

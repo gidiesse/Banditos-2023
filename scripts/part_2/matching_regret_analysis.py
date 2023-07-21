@@ -27,7 +27,7 @@ import matplotlib.pyplot as plt
 # 4) If we match C2 with D3 or C3 with D2, our mean reward is 30.
 # 5) If we match C2 or C3 with D1, our mean reward is 5.
 
-np.random.seed(13)
+np.random.seed(17)
 n_nodes = 30
 n_arms = 50
 mc_it = 50
@@ -40,7 +40,7 @@ n_cc = 3
 sigma = 20
 
 # Flag True if the regret analysis has to be carried on TS algorithm, otherwise UCB
-TS = True
+TS = False
 if TS:
     legend = "Combinatorial TS"
 else:
